@@ -10,6 +10,8 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -51,63 +53,33 @@ public class DatasetsTests {
     }
 
     @Test
+    public void testReturnDatasetByCaption() throws Exception {
+        List<Dataset> datasets = apiService.getDatasetByCaption("Caption eq 'Кинотеатры'").execute().body();
+        Assert.assertEquals(1, datasets.size());
+        Assert.assertEquals("Кинотеатры", datasets.get(0).getCaption());
+    }
+
+    @Test
     public void testDatasetHasAllNeedColumns() throws Exception {
         DatasetInfo datasetInfo = apiService.getDatasetInfo(658).execute().body();
 
         Assert.assertEquals(9, datasetInfo.getColumns().size());
 
+        List<String> columnsNames = new ArrayList<>();
+        columnsNames.add("NameOfTariff");
+        columnsNames.add("TicketZone");
+        columnsNames.add("NumberOfZone");
+        columnsNames.add("TariffDistance");
+        columnsNames.add("TypeOfTransport");
+        columnsNames.add("NameOfCarrier");
+        columnsNames.add("TicketCost");
+        columnsNames.add("TicketValidity");
+        columnsNames.add("global_id");
+
         List<Column> columns = datasetInfo.getColumns();
 
-        boolean hasGlobal_Id = false;
-        boolean hasTicketValidity = false;
-        boolean hasTicketCost = false;
-        boolean hasNameOfCarrier = false;
-        boolean hasTypeOfTransport = false;
-        boolean hasTariffDistance = false;
-        boolean hasNumberOfZone = false;
-        boolean hasTicketZone = false;
-        boolean hasNameOfTariff = false;
-
         for (Column column : columns) {
-            switch (column.getName()) {
-                case "NameOfTariff":
-                    hasNameOfTariff = true;
-                    break;
-                case "TicketZone":
-                    hasTicketZone = true;
-                    break;
-                case "NumberOfZone":
-                    hasNumberOfZone = true;
-                    break;
-                case "TariffDistance":
-                    hasTariffDistance = true;
-                    break;
-                case "TypeOfTransport":
-                    hasTypeOfTransport = true;
-                    break;
-                case "NameOfCarrier":
-                    hasNameOfCarrier = true;
-                    break;
-                case "TicketCost":
-                    hasTicketCost = true;
-                    break;
-                case "TicketValidity":
-                    hasTicketValidity = true;
-                    break;
-                case "global_id":
-                    hasGlobal_Id = true;
-                    break;
-            }
+            Assert.assertTrue(columnsNames.contains(column.getName()));
         }
-
-        Assert.assertTrue(hasGlobal_Id);
-        Assert.assertTrue(hasTicketValidity);
-        Assert.assertTrue(hasTicketCost);
-        Assert.assertTrue(hasNameOfCarrier);
-        Assert.assertTrue(hasTypeOfTransport);
-        Assert.assertTrue(hasTariffDistance);
-        Assert.assertTrue(hasNumberOfZone);
-        Assert.assertTrue(hasTicketZone);
-        Assert.assertTrue(hasNameOfTariff);
     }
 }

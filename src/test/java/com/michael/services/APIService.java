@@ -8,6 +8,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
+import java.util.List;
+
 /**
  * Created by maste on 4/16/2017.
  */
@@ -21,4 +23,7 @@ public interface APIService {
 
     @GET("datasets/{id}")
     Call<DatasetInfo> getDatasetInfo(@Path("id") int id);
+
+    @GET("datasets")
+    Call<List<Dataset>> getDatasetByCaption(@Query("$filter") String filter);
 }
